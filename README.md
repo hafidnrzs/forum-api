@@ -5,7 +5,8 @@ Back-End API for forum application built using JavaScript (Node.js). This is fir
 ## How to run
 
 1. Copy `test.example.json` and rename to `test.json` and fill with your configuration
-2. Install dependencies (Recommended using pnpm)
+2. Copy `.env.example` and rename to `.env` and fill with your environment variable
+3. Install dependencies (Recommended using pnpm)
 
 ```bash
 pnpm install
