@@ -22,11 +22,28 @@ describe('ThreadDetail entities', () => {
       title: 'judul thread',
       body: 'isi thread',
       date: '2025-12-06T07:22:33.555Z',
+      username: 1234,
+      comments: {},
+    };
+
+    // Action & Assert
+    expect(() => new ThreadDetail(payload)).toThrowError(
+      'THREAD_DETAIL.NOT_MEET_DATA_TYPE_SPECIFICATION'
+    );
+  });
+
+  it('should throw error when comments is not an array', () => {
+    // Arrange
+    const payload = {
+      id: 'thread-123',
+      title: 'judul thread',
+      body: 'isi thread',
+      date: '2025-12-06T07:22:33.555Z',
       username: 'user-123',
       comments: {
         id: 'comment-123',
         username: 'user-123',
-        date: '2022-12-06T07:22:33.555Z',
+        date: '2025-12-06T07:22:33.555Z',
         content: 'sebuah komentar',
       },
     };

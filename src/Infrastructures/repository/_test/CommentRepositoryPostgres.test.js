@@ -163,4 +163,44 @@ describe('CommentRepositoryPostgres', () => {
       expect(comments[0].is_delete).toEqual(true);
     });
   });
+
+  describe('getCommentsByThreadId function', () => {
+    it('should return ordered CommentDetail array and mask deleted comment', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding' });
+      await ThreadsTableTestHelper.addThread({ id: 'thread-123', owner: 'user-123' });
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-001',
+        threadId: 'thread-123',
+        owner: 'user-123',
+        date: '2025-12-05T07:22:33.000Z',
+      });
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-002',
+        threadId: 'thread-123',
+        owner: 'user-123',
+        date: '2025-12-05T08:22:33.000Z',
+        isDelete: true,
+      });
+      const commentRepositoryPostgres = new CommentRepositoryPostgres(pool, {});
+
+      // Action
+      const comments = await commentRepositoryPostgres.getCommentsByThreadId('thread-123');
+
+      // Assert
+      expect(comments).toHaveLength(2);
+      expect(comments[0]).toMatchObject({
+        id: 'comment-001',
+        username: 'dicoding',
+        date: '2025-12-05T07:22:33.000Z',
+        content: 'sebuah comment',
+      });
+      expect(comments[1]).toMatchObject({
+        id: 'comment-002',
+        username: 'dicoding',
+        date: '2025-12-05T08:22:33.000Z',
+        content: '**komentar telah dihapus**',
+      });
+    });
+  });
 });

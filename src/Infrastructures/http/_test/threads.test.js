@@ -4,6 +4,7 @@ const createServer = require('../createServer');
 const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const AuthenticationsTableTestHelper = require('../../../../tests/AuthenticationsTableTestHelper');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 
 describe('/threads endpooint', () => {
   afterAll(async () => {
@@ -14,6 +15,7 @@ describe('/threads endpooint', () => {
     await UsersTableTestHelper.cleanTable();
     await AuthenticationsTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
+    await CommentsTableTestHelper.cleanTable();
   });
 
   describe('when POST /threads', () => {
@@ -194,6 +196,78 @@ describe('/threads endpooint', () => {
   });
 
   describe('when GET /threads/{threadId}', () => {
-    // TODO: next implementation
+    it('should response 404 when thread not found', async () => {
+      // Arrange
+      const server = await createServer(container);
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-xxx',
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(404);
+      expect(responseJson.status).toEqual('fail');
+      expect(responseJson.message).toEqual('thread tidak ditemukan');
+    });
+
+    it('should response 200 and return thread detail with comments', async () => {
+      // Arrange
+      const server = await createServer(container);
+      await UsersTableTestHelper.addUser({ id: 'user-123', username: 'dicoding' });
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-123',
+        owner: 'user-123',
+        title: 'judul thread',
+        body: 'isi thread',
+        date: '2025-12-06T07:22:33.555Z',
+      });
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-001',
+        threadId: 'thread-123',
+        owner: 'user-123',
+        date: '2025-12-06T07:23:33.555Z',
+        content: 'komentar pertama',
+      });
+      await CommentsTableTestHelper.addComment({
+        id: 'comment-002',
+        threadId: 'thread-123',
+        owner: 'user-123',
+        date: '2025-12-06T07:24:33.555Z',
+        content: 'komentar dihapus',
+        isDelete: true,
+      });
+
+      // Action
+      const response = await server.inject({
+        method: 'GET',
+        url: '/threads/thread-123',
+      });
+
+      // Assert
+      const responseJson = JSON.parse(response.payload);
+      expect(response.statusCode).toEqual(200);
+      expect(responseJson.status).toEqual('success');
+      const { thread } = responseJson.data;
+      expect(thread).toMatchObject({
+        id: 'thread-123',
+        title: 'judul thread',
+        body: 'isi thread',
+        username: 'dicoding',
+      });
+      expect(thread.comments).toHaveLength(2);
+      expect(thread.comments[0]).toMatchObject({
+        id: 'comment-001',
+        username: 'dicoding',
+        content: 'komentar pertama',
+      });
+      expect(thread.comments[1]).toMatchObject({
+        id: 'comment-002',
+        username: 'dicoding',
+        content: '**komentar telah dihapus**',
+      });
+    });
   });
 });
