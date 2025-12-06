@@ -2,7 +2,7 @@ class ReplyRepository {
   async addReply(newReply, commentId, ownerId) {
     throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
-  async getRepliesByCommentIds(replyIds) {
+  async getRepliesByCommentIds(commentIds) {
     throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
   }
   async verifyReplyExists(replyId) {

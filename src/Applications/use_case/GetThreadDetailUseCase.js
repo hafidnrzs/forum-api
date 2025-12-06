@@ -17,12 +17,12 @@ class GetThreadDetailUseCase {
     const replies = await this._replyRepository.getRepliesByCommentIds(commentIds);
 
     // group replies by comment_id
-    const repliesByCommentId = commentIds.reduce((acc, id) => {
-      acc[id] = [];
-      return acc;
-    }, {});
+    const repliesByCommentId = {};
 
     replies.forEach((reply) => {
+      if (!repliesByCommentId[reply.comment_id]) {
+        repliesByCommentId[reply.comment_id] = [];
+      }
       repliesByCommentId[reply.comment_id].push({
         id: reply.id,
         username: reply.username,

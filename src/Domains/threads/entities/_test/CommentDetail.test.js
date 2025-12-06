@@ -29,6 +29,22 @@ describe('CommentDetail entities', () => {
     );
   });
 
+  it('should throw error when replies is not an array', () => {
+    // Arrange
+    const payload = {
+      id: 'comment-123',
+      username: 'user-123',
+      date: '2025-12-06T07:22:33.555Z',
+      content: 'sebuah komentar',
+      replies: 'bukan array',
+    };
+
+    // Action & Assert
+    expect(() => new CommentDetail(payload)).toThrowError(
+      'COMMENT_DETAIL.NOT_MEET_DATA_TYPE_SPECIFICATION'
+    );
+  });
+
   it('should create CommentDetail entities correctly', () => {
     // Arrange
     const payload = {

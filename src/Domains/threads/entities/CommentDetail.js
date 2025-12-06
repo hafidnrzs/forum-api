@@ -6,6 +6,7 @@ class CommentDetail {
     this.username = payload.username;
     this.date = payload.date;
     this.content = payload.is_delete ? '**komentar telah dihapus**' : payload.content;
+    this.replies = payload.replies;
   }
 
   _verifyPayload(payload) {
@@ -21,6 +22,10 @@ class CommentDetail {
       typeof date !== 'string' ||
       typeof content !== 'string'
     ) {
+      throw new Error('COMMENT_DETAIL.NOT_MEET_DATA_TYPE_SPECIFICATION');
+    }
+
+    if (payload.replies && !Array.isArray(payload.replies)) {
       throw new Error('COMMENT_DETAIL.NOT_MEET_DATA_TYPE_SPECIFICATION');
     }
   }

@@ -16,6 +16,8 @@ describe('ReplyDetail entities', () => {
       content: 'balasan komentar',
       date: '2025-12-06T17:36:18.982Z',
       username: 1234,
+      comment_id: 'comment-123',
+      is_delete: false,
     };
 
     // Action & Assert
@@ -31,6 +33,8 @@ describe('ReplyDetail entities', () => {
       content: 'balasan komentar',
       date: '2025-12-06T17:36:18.982Z',
       username: 'johndoe',
+      comment_id: 'comment-123',
+      is_delete: false,
     };
 
     // Action
@@ -42,5 +46,7 @@ describe('ReplyDetail entities', () => {
     expect(replyDetail.content).toEqual(payload.content);
     expect(replyDetail.date).toEqual(payload.date);
     expect(replyDetail.username).toEqual(payload.username);
+    expect(replyDetail.comment_id).toEqual(payload.comment_id);
+    expect(replyDetail.is_delete).toEqual(payload.is_delete);
   });
 });
