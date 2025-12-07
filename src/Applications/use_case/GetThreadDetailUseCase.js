@@ -1,4 +1,5 @@
 const ThreadDetail = require('../../Domains/threads/entities/ThreadDetail');
+const ReplyDetail = require('../../Domains/replies/entities/ReplyDetail');
 
 class GetThreadDetailUseCase {
   constructor({ threadRepository, commentRepository, replyRepository }) {
@@ -23,12 +24,16 @@ class GetThreadDetailUseCase {
       if (!repliesByCommentId[reply.comment_id]) {
         repliesByCommentId[reply.comment_id] = [];
       }
-      repliesByCommentId[reply.comment_id].push({
+      // Keep reply as ReplyDetail instance, only change content if deleted
+      const replyDetail = new ReplyDetail({
         id: reply.id,
         username: reply.username,
         date: reply.date,
         content: reply.is_delete ? '**balasan telah dihapus**' : reply.content,
+        comment_id: reply.comment_id,
+        is_delete: reply.is_delete,
       });
+      repliesByCommentId[reply.comment_id].push(replyDetail);
     });
 
     // sort each comment replies by date ascending
@@ -36,11 +41,11 @@ class GetThreadDetailUseCase {
       replyArray.sort((a, b) => new Date(a.date) - new Date(b.date));
     });
 
-    // attach replies to comments
-    const commentsWithReplies = comments.map((comment) => ({
-      ...comment,
-      replies: repliesByCommentId[comment.id] || [],
-    }));
+    // attach replies to comments (preserve CommentDetail instances)
+    const commentsWithReplies = comments.map((comment) => {
+      comment.replies = repliesByCommentId[comment.id] || [];
+      return comment;
+    });
 
     // combine thread with comments and their replies
     return new ThreadDetail({

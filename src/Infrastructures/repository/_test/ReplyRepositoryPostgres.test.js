@@ -7,6 +7,7 @@ const ReplyRepositoryPostgres = require('../ReplyRepositoryPostgres');
 const AddedReply = require('../../../Domains/replies/entities/AddedReply');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
+const ReplyDetail = require('../../../Domains/replies/entities/ReplyDetail');
 
 describe('ReplyRepositoryPostgres', () => {
   const fakeIdGenerator = () => '123';
@@ -154,6 +155,9 @@ describe('ReplyRepositoryPostgres', () => {
     const result = await replyRepository.getRepliesByCommentIds(['comment-123']);
 
     // Assert
+    expect(result).toEqual(
+      expect.arrayContaining([expect.any(ReplyDetail), expect.any(ReplyDetail)])
+    );
     expect(result).toHaveLength(2);
     expect(result[0].id).toBe('reply-1');
     expect(result[1].id).toBe('reply-2');

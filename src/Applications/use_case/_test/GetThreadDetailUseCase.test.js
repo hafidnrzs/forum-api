@@ -5,6 +5,7 @@ const ThreadDetail = require('../../../Domains/threads/entities/ThreadDetail');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const GetThreadDetailUseCase = require('../GetThreadDetailUseCase');
 const ReplyRepository = require('../../../Domains/replies/ReplyRepository');
+const ReplyDetail = require('../../../Domains/replies/entities/ReplyDetail');
 
 describe('GetThreadDetailUseCase', () => {
   it('should orchestrate get thread detail action correctly', async () => {
@@ -62,6 +63,10 @@ describe('GetThreadDetailUseCase', () => {
     expect(mockReplyRepository.getRepliesByCommentIds).toBeCalledWith(['comment-123']);
     expect(threadDetail).toBeInstanceOf(ThreadDetail);
     expect(threadDetail.id).toEqual(threadId);
+    expect(threadDetail.comments).toEqual(expect.arrayContaining([expect.any(CommentDetail)]));
+    expect(threadDetail.comments[0].replies).toEqual(
+      expect.arrayContaining([expect.any(ReplyDetail)])
+    );
     expect(threadDetail.comments).toHaveLength(1);
     expect(threadDetail.comments[0].replies).toHaveLength(1);
     expect(threadDetail.comments[0].replies[0].content).toEqual('sebuah balasan');
@@ -144,6 +149,10 @@ describe('GetThreadDetailUseCase', () => {
     const threadDetail = await useCase.execute(threadPayload.id);
 
     // Assert
+    expect(threadDetail.comments).toEqual(expect.arrayContaining([expect.any(CommentDetail)]));
+    expect(threadDetail.comments[0].replies).toEqual(
+      expect.arrayContaining([expect.any(ReplyDetail), expect.any(ReplyDetail)])
+    );
     expect(threadDetail.comments[0].replies).toHaveLength(2);
     expect(threadDetail.comments[0].replies[0].content).toEqual('balasan aktif');
     expect(threadDetail.comments[0].replies[1].content).toEqual('**balasan telah dihapus**');
@@ -205,6 +214,12 @@ describe('GetThreadDetailUseCase', () => {
     const threadDetail = await useCase.execute(threadPayload.id);
 
     // Assert
+    expect(threadDetail.comments).toEqual(
+      expect.arrayContaining([expect.any(CommentDetail), expect.any(CommentDetail)])
+    );
+    expect(threadDetail.comments[0].replies).toEqual(
+      expect.arrayContaining([expect.any(ReplyDetail)])
+    );
     expect(threadDetail.comments[0].replies).toHaveLength(1);
     expect(threadDetail.comments[1].replies).toEqual([]);
   });
@@ -274,6 +289,14 @@ describe('GetThreadDetailUseCase', () => {
     const threadDetail = await useCase.execute(threadPayload.id);
 
     // Assert
+    expect(threadDetail.comments).toEqual(expect.arrayContaining([expect.any(CommentDetail)]));
+    expect(threadDetail.comments[0].replies).toEqual(
+      expect.arrayContaining([
+        expect.any(ReplyDetail),
+        expect.any(ReplyDetail),
+        expect.any(ReplyDetail),
+      ])
+    );
     expect(threadDetail.comments[0].replies[0].id).toBe('reply-1');
     expect(threadDetail.comments[0].replies[1].id).toBe('reply-2');
     expect(threadDetail.comments[0].replies[2].id).toBe('reply-3');

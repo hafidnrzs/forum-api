@@ -26,7 +26,13 @@ describe('AddReplyUseCase', () => {
     /** mock needed function */
     mockThreadRepository.checkThreadAvailability = jest.fn().mockResolvedValue();
     mockCommentRepository.checkCommentAvailability = jest.fn().mockResolvedValue();
-    mockReplyRepository.addReply = jest.fn().mockResolvedValue(new AddedReply(expected));
+    mockReplyRepository.addReply = jest.fn().mockResolvedValue(
+      new AddedReply({
+        id: 'reply-123',
+        content: 'sebuah balasan komentar',
+        owner,
+      })
+    );
 
     /** create use case instance */
     const addReplyUseCase = new AddReplyUseCase({

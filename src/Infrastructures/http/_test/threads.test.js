@@ -274,17 +274,23 @@ describe('/threads endpooint', () => {
       expect(thread.body).toEqual('isi thread');
       expect(thread.username).toEqual('dicoding');
       expect(thread.comments).toHaveLength(2);
-
-      /** first comment with replies */
-      expect(thread.comments[0].id).toEqual('comment-001');
-      expect(thread.comments[0].content).toEqual('komentar pertama');
+      expect(thread.comments[0]).toMatchObject({
+        id: 'comment-001',
+        content: 'komentar pertama',
+      });
       expect(thread.comments[0].replies).toHaveLength(2);
-      expect(thread.comments[0].replies[0].content).toEqual('**balasan telah dihapus**');
-      expect(thread.comments[0].replies[1].content).toEqual('balasan kedua');
+      expect(thread.comments[0].replies[0]).toMatchObject({
+        content: '**balasan telah dihapus**',
+      });
+      expect(thread.comments[0].replies[1]).toMatchObject({
+        content: 'balasan kedua',
+      });
 
       /** second comment, deleted */
-      expect(thread.comments[1].id).toEqual('comment-002');
-      expect(thread.comments[1].content).toEqual('**komentar telah dihapus**');
+      expect(thread.comments[1]).toMatchObject({
+        id: 'comment-002',
+        content: '**komentar telah dihapus**',
+      });
       expect(thread.comments[1].replies).toEqual([]);
     });
   });

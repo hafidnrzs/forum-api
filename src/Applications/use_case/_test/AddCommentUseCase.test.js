@@ -26,9 +26,15 @@ describe('AddCommentUseCase', () => {
     mockThreadRepository.checkThreadAvailability = jest
       .fn()
       .mockImplementation(() => Promise.resolve());
-    mockCommentRepository.addComment = jest
-      .fn()
-      .mockImplementation(() => Promise.resolve(expectedAddedComment));
+    mockCommentRepository.addComment = jest.fn().mockImplementation(() =>
+      Promise.resolve(
+        new AddedComment({
+          id: 'comment-123',
+          content: useCasePayload.content,
+          owner,
+        })
+      )
+    );
 
     /** creating use case instance */
     const addCommentUseCase = new AddCommentUseCase({

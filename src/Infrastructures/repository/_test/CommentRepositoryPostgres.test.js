@@ -6,6 +6,7 @@ const AuthorizationError = require('../../../Commons/exceptions/AuthorizationErr
 const AddedComment = require('../../../Domains/comments/entities/AddedComment');
 const pool = require('../../database/postgres/pool');
 const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
+const CommentDetail = require('../../../Domains/threads/entities/CommentDetail');
 
 describe('CommentRepositoryPostgres', () => {
   afterEach(async () => {
@@ -188,6 +189,9 @@ describe('CommentRepositoryPostgres', () => {
       const comments = await commentRepositoryPostgres.getCommentsByThreadId('thread-123');
 
       // Assert
+      expect(comments).toEqual(
+        expect.arrayContaining([expect.any(CommentDetail), expect.any(CommentDetail)])
+      );
       expect(comments).toHaveLength(2);
       expect(comments[0]).toMatchObject({
         id: 'comment-001',
