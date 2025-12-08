@@ -75,7 +75,7 @@ describe('ReplyRepositoryPostgres', () => {
     // Action & Assert
     await RepliesTableTestHelper.addReply({ id: 'reply-123', commentId: 'comment-123' });
 
-    await expect(replyRepository.verifyReplyExists('reply-123')).resolves.not.toThrow();
+    await expect(replyRepository.verifyReplyExists('reply-123')).resolves.not.toThrowError(NotFoundError);
   });
 
   it('verifyReplyOwner throws NotFoundError when missing', async () => {
@@ -120,7 +120,7 @@ describe('ReplyRepositoryPostgres', () => {
     });
 
     // Assert
-    await expect(replyRepository.verifyReplyOwner('reply-123', 'user-123')).resolves.not.toThrow();
+    await expect(replyRepository.verifyReplyOwner('reply-123', 'user-123')).resolves.not.toThrowError(AuthorizationError);
   });
 
   it('deleteReply sets is_delete true (soft delete)', async () => {
@@ -159,8 +159,26 @@ describe('ReplyRepositoryPostgres', () => {
       expect.arrayContaining([expect.any(ReplyDetail), expect.any(ReplyDetail)])
     );
     expect(result).toHaveLength(2);
-    expect(result[0].id).toBe('reply-1');
-    expect(result[1].id).toBe('reply-2');
+    expect(result[0]).toStrictEqual(
+      new ReplyDetail({
+        id: 'reply-1',
+        content: 'balasan komentar',
+        date: '2025-12-07T01:29:00.000Z',
+        username: 'dicoding',
+        comment_id: 'comment-123',
+        is_delete: false,
+      })
+    );
+    expect(result[1]).toStrictEqual(
+      new ReplyDetail({
+        id: 'reply-2',
+        content: 'balasan komentar',
+        date: '2025-12-07T02:30:00.000Z',
+        username: 'dicoding',
+        comment_id: 'comment-123',
+        is_delete: true,
+      })
+    );
   });
 
   it('getRepliesByCommentIds returns empty array when commentIds is empty', async () => {

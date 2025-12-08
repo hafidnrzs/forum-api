@@ -193,18 +193,24 @@ describe('CommentRepositoryPostgres', () => {
         expect.arrayContaining([expect.any(CommentDetail), expect.any(CommentDetail)])
       );
       expect(comments).toHaveLength(2);
-      expect(comments[0]).toMatchObject({
-        id: 'comment-001',
-        username: 'dicoding',
-        date: '2025-12-05T07:22:33.000Z',
-        content: 'sebuah comment',
-      });
-      expect(comments[1]).toMatchObject({
-        id: 'comment-002',
-        username: 'dicoding',
-        date: '2025-12-05T08:22:33.000Z',
-        content: '**komentar telah dihapus**',
-      });
+      expect(comments[0]).toStrictEqual(
+        new CommentDetail({
+          id: 'comment-001',
+          username: 'dicoding',
+          date: '2025-12-05T07:22:33.000Z',
+          content: 'sebuah comment',
+          is_delete: false,
+        })
+      );
+      expect(comments[1]).toStrictEqual(
+        new CommentDetail({
+          id: 'comment-002',
+          username: 'dicoding',
+          date: '2025-12-05T08:22:33.000Z',
+          content: '**komentar telah dihapus**',
+          is_delete: true,
+        })
+      );
     });
   });
 });
