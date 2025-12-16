@@ -153,7 +153,7 @@ describe('/threads endpooint', () => {
       const server = await createServer(container);
 
       /* Add user */
-      await server.inject({
+      const addUserResponse = await server.inject({
         method: 'POST',
         url: '/users',
         payload: {
@@ -162,6 +162,11 @@ describe('/threads endpooint', () => {
           fullname: 'Dicoding Indonesia',
         },
       });
+      const {
+        data: {
+          addedUser: { id: userId },
+        },
+      } = JSON.parse(addUserResponse.payload);
 
       /* Login to get access token */
       const loginResponse = await server.inject({
@@ -193,7 +198,7 @@ describe('/threads endpooint', () => {
       expect(responseJson.data.addedThread).toBeDefined();
       expect(responseJson.data.addedThread.id).toBeDefined();
       expect(responseJson.data.addedThread.title).toEqual(requestPayload.title);
-      expect(responseJson.data.addedThread.owner).toBeDefined();
+      expect(responseJson.data.addedThread.owner).toEqual(userId);
     });
   });
 
