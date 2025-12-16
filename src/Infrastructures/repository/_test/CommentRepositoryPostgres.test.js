@@ -6,7 +6,7 @@ const AuthorizationError = require('../../../Commons/exceptions/AuthorizationErr
 const AddedComment = require('../../../Domains/comments/entities/AddedComment');
 const pool = require('../../database/postgres/pool');
 const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
-const CommentDetail = require('../../../Domains/threads/entities/CommentDetail');
+const CommentDetail = require('../../../Domains/comments/entities/CommentDetail');
 
 describe('CommentRepositoryPostgres', () => {
   afterEach(async () => {

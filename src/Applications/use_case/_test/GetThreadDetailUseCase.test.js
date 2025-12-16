@@ -1,5 +1,5 @@
 const CommentRepository = require('../../../Domains/comments/CommentRepository');
-const CommentDetail = require('../../../Domains/threads/entities/CommentDetail');
+const CommentDetail = require('../../../Domains/comments/entities/CommentDetail');
 const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const ThreadDetail = require('../../../Domains/threads/entities/ThreadDetail');
 const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
