@@ -13,6 +13,7 @@ jobs:
         image: postgres
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: forumapi_test
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -29,9 +30,13 @@ jobs:
         with:
           node-version: '22'
       - run: |
-          npm install
+          npm ci
           npm run migrate up
           npm run test
         env:
-          POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+          NODE_ENV: test
+          PGHOST_TEST: localhost
+          PGPORT_TEST: 5432
+          PGUSER_TEST: postgres
+          PGPASSWORD_TEST: postgres
+          PGDATABASE_TEST: forumapi_test
