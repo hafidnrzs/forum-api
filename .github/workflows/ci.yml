@@ -29,7 +29,8 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '22'
-      - run: |
+      - name: Install dependencies, migration, and run tests
+        run: |
           npm install
           npm run migrate up
           npm run test
@@ -39,3 +40,6 @@ jobs:
           PGUSER: postgres
           PGPASSWORD: postgres
           PGDATABASE: forumapi_test
+          ACCESS_TOKEN_KEY: access_secret
+          REFRESH_TOKEN_KEY: refresh_secret
+          ACCESS_TOKEN_AGE: 3600
