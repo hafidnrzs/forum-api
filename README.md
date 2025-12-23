@@ -6,28 +6,28 @@ Back-End API for forum application built using JavaScript (Node.js). This is fir
 
 1. Copy `test.example.json` and rename to `test.json` and fill with your configuration
 2. Copy `.env.example` and rename to `.env` and fill with your environment variable
-3. Install dependencies (Recommended using pnpm)
+3. Install dependencies
 
 ```bash
-pnpm install
+npm install
 ```
 
 3. Run the server
 
 ```bash
-pnpm run start:dev  # run the development server
-pnpm run start      # run production server
+npm run start:dev  # run the development server
+npm run start      # run production server
 ```
 
 ## Development command
 
 ```bash
-pnpm run start:dev  # run the development server
-pnpm run test       # run test and check test coverage using Jest
+npm run start:dev  # run the development server
+npm run test       # run test and check test coverage using Jest
 
 # Database Migration
-pnpm run migrate                            # master command to run the database migration
-pnpm run migrate up                         # run the migration
-pnpm run migrate create "create-table-xxx"  # create a new migration file to create a table
-pnpm run migrate:test                       # master command to run the database migration for testing
+npm run migrate                            # master command to run the database migration
+npm run migrate up                         # run the migration
+npm run migrate create "create-table-xxx"  # create a new migration file to create a table
+npm run migrate:test                       # master command to run the database migration for testing
 ```
