@@ -16,8 +16,8 @@
 # Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
 ##
 
-# Rate limit 90 request / minute
-limit_req_zone $binary_remote_addr zone=one:10m rate=90r/m;
+# Rate limit 90 request/minute only for /threads
+limit_req_zone $binary_remote_addr zone=threads_zone:10m rate=90r/m;
 
 # Default server configuration
 #
@@ -46,9 +46,18 @@ server {
 
         server_name forumapi.hafidnrzs.com www.forumapi.hafidnrzs.com;
 
-        location / {
-                limit_req zone=one;
+        location ~ ^/threads {
+                limit_req zone=threads_zone burst=5;
 
+                proxy_pass http://localhost:3000;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+        }
+
+        location / {
                 proxy_pass http://localhost:3000;
                 proxy_http_version 1.1;
                 proxy_set_header Upgrade $http_upgrade;
