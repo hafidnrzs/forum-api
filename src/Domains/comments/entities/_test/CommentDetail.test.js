@@ -21,6 +21,7 @@ describe('CommentDetail entities', () => {
       username: 'user-123',
       date: '2025-12-06T07:22:33.555Z',
       content: 'sebuah komentar',
+      likeCount: undefined,
     };
 
     // Action & Assert
@@ -51,6 +52,7 @@ describe('CommentDetail entities', () => {
       id: 'comment-123',
       username: 'user-123',
       date: '2025-12-06T07:22:33.555Z',
+      likeCount: 0,
       content: 'sebuah komentar',
     };
 
@@ -62,6 +64,25 @@ describe('CommentDetail entities', () => {
     expect(commentDetail.id).toEqual(payload.id);
     expect(commentDetail.username).toEqual(payload.username);
     expect(commentDetail.date).toEqual(payload.date);
+    expect(commentDetail.likeCount).toEqual(payload.likeCount);
     expect(commentDetail.content).toEqual(payload.content);
+  });
+
+  it('should handle deleted comment with default likeCount', () => {
+    // Arrange
+    const payload = {
+      id: 'comment-123',
+      username: 'user-123',
+      date: '2025-12-06T07:22:33.555Z',
+      content: 'sebuah komentar',
+      is_delete: true,
+    };
+
+    // Action
+    const commentDetail = new CommentDetail(payload);
+
+    // Assert
+    expect(commentDetail.content).toEqual('**komentar telah dihapus**');
+    expect(commentDetail.likeCount).toEqual(0);
   });
 });

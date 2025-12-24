@@ -69,10 +69,13 @@ class CommentRepositoryPostgres extends CommentRepository {
 
   async getCommentsByThreadId(threadId) {
     const query = {
-      text: `SELECT c.id, c.content, c.date, c.is_delete, u.username
+      text: `SELECT c.id, c.content, c.date, c.is_delete, u.username,
+      COUNT(DISTINCT cl.id)::int AS "likeCount"
       FROM comments c
       LEFT JOIN users u ON c.owner = u.id
+      LEFT JOIN comment_likes cl ON c.id = cl.comment_id
       WHERE thread_id = $1
+      GROUP BY c.id, c.content, c.date, c.is_delete, u.username
       ORDER BY date ASC`,
       values: [threadId],
     };
@@ -80,6 +83,46 @@ class CommentRepositoryPostgres extends CommentRepository {
     const result = await this._pool.query(query);
 
     return result.rows.map((comment) => new CommentDetail(comment));
+  }
+
+  async likeComment(commentId, userId) {
+    const id = `like-${this._idGenerator()}`;
+    const createdAt = new Date().toISOString();
+
+    // Cek state apakah user sudah like atau tidak
+    const checkQuery = {
+      text: 'SELECT id FROM comment_likes WHERE comment_id = $1 AND user_id = $2',
+      values: [commentId, userId],
+    };
+
+    const checkResult = await this._pool.query(checkQuery);
+
+    if (checkResult.rowCount > 0) {
+      // Jika terdeteksi, maka hapus like
+      const deleteQuery = {
+        text: 'DELETE FROM comment_likes WHERE comment_id = $1 AND user_id = $2',
+        values: [commentId, userId],
+      };
+      await this._pool.query(deleteQuery);
+    } else {
+      // Tambah like
+      const insertQuery = {
+        text: 'INSERT INTO comment_likes VALUES ($1, $2, $3, $4)',
+        values: [id, commentId, userId, createdAt],
+      };
+      await this._pool.query(insertQuery);
+    }
+  }
+
+  async getCommentLikeCount(commentId) {
+    const query = {
+      text: 'SELECT COUNT(*) FROM comment_likes WHERE comment_id = $1',
+      values: [commentId],
+    };
+
+    const result = await this._pool.query(query);
+
+    return parseInt(result.rows[0].count, 10);
   }
 }
 
