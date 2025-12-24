@@ -47,7 +47,7 @@ server {
         server_name forumapi.hafidnrzs.com www.forumapi.hafidnrzs.com;
 
         location ~ ^/threads {
-                limit_req zone=threads_zone burst=5;
+                limit_req zone=threads_zone;
 
                 proxy_pass http://localhost:3000;
                 proxy_http_version 1.1;
