@@ -279,24 +279,43 @@ describe('/threads endpooint', () => {
       expect(thread.body).toEqual('isi thread');
       expect(thread.username).toEqual('dicoding');
       expect(thread.comments).toHaveLength(2);
-      expect(thread.comments[0]).toMatchObject({
+      const expectedComment1 = {
         id: 'comment-001',
+        username: 'dicoding',
+        date: '2025-12-06T07:23:33.555Z',
         content: 'komentar pertama',
-      });
-      expect(thread.comments[0].replies).toHaveLength(2);
-      expect(thread.comments[0].replies[0]).toMatchObject({
-        content: '**balasan telah dihapus**',
-      });
-      expect(thread.comments[0].replies[1]).toMatchObject({
-        content: 'balasan kedua',
-      });
+        likeCount: 0,
+        replies: [
+          {
+            id: 'reply-001',
+            content: '**balasan telah dihapus**',
+            date: '2025-12-06T07:25:33.555Z',
+            username: 'alice',
+            comment_id: 'comment-001',
+            is_delete: true,
+          },
+          {
+            id: 'reply-002',
+            content: 'balasan kedua',
+            date: '2025-12-06T07:26:33.555Z',
+            username: 'dicoding',
+            comment_id: 'comment-001',
+            is_delete: false,
+          },
+        ],
+      };
+      expect(thread.comments[0]).toStrictEqual(expectedComment1);
 
       /** second comment, deleted */
-      expect(thread.comments[1]).toMatchObject({
+      const expectedComment2 = {
         id: 'comment-002',
+        username: 'dicoding',
+        date: '2025-12-06T07:24:33.555Z',
         content: '**komentar telah dihapus**',
-      });
-      expect(thread.comments[1].replies).toEqual([]);
+        likeCount: 0,
+        replies: [],
+      };
+      expect(thread.comments[1]).toStrictEqual(expectedComment2);
     });
   });
 });
