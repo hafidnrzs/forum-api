@@ -35,6 +35,7 @@ const ReplyRepository = require('../Domains/replies/ReplyRepository');
 const ReplyRepositoryPostgres = require('./repository/ReplyRepositoryPostgres');
 const AddReplyUseCase = require('../Applications/use_case/AddReplyUseCase');
 const DeleteReplyUseCase = require('../Applications/use_case/DeleteReplyUseCase');
+const LikeCommentUseCase = require('../Applications/use_case/LikeCommentUseCase');
 
 // creating container
 const container = createContainer();
@@ -45,95 +46,72 @@ container.register([
     key: UserRepository.name,
     Class: UserRepositoryPostgres,
     parameter: {
-      dependencies: [
-        {
-          concrete: pool,
-        },
-        {
-          concrete: nanoid,
-        },
-      ],
+      dependencies: [{ concrete: pool }, { concrete: nanoid }],
     },
   },
   {
     key: ThreadRepository.name,
     Class: ThreadRepositoryPostgres,
     parameter: {
-      dependencies: [
-        {
-          concrete: pool,
-        },
-        {
-          concrete: nanoid,
-        },
-      ],
+      dependencies: [{ concrete: pool }, { concrete: nanoid }],
     },
   },
   {
     key: CommentRepository.name,
     Class: CommentRepositoryPostgres,
     parameter: {
-      dependencies: [
-        {
-          concrete: pool,
-        },
-        {
-          concrete: nanoid,
-        },
-      ],
+      dependencies: [{ concrete: pool }, { concrete: nanoid }],
     },
   },
   {
     key: ReplyRepository.name,
     Class: ReplyRepositoryPostgres,
     parameter: {
-      dependencies: [
-        {
-          concrete: pool,
-        },
-        {
-          concrete: nanoid,
-        },
-      ],
+      dependencies: [{ concrete: pool }, { concrete: nanoid }],
     },
   },
   {
     key: AuthenticationRepository.name,
     Class: AuthenticationRepositoryPostgres,
     parameter: {
-      dependencies: [
-        {
-          concrete: pool,
-        },
-      ],
+      dependencies: [{ concrete: pool }],
     },
   },
   {
     key: PasswordHash.name,
     Class: BcryptPasswordHash,
     parameter: {
-      dependencies: [
-        {
-          concrete: bcrypt,
-        },
-      ],
+      dependencies: [{ concrete: bcrypt }],
     },
   },
   {
     key: AuthenticationTokenManager.name,
     Class: JwtTokenManager,
     parameter: {
-      dependencies: [
-        {
-          concrete: Jwt.token,
-        },
-      ],
+      dependencies: [{ concrete: Jwt.token }],
     },
   },
 ]);
 
 // registering use cases
 container.register([
+  {
+    key: LikeCommentUseCase.name,
+    Class: LikeCommentUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        {
+          name: 'commentRepository',
+          internal: CommentRepository.name,
+        },
+        {
+          name: 'threadRepository',
+          internal: ThreadRepository.name,
+        },
+      ],
+    },
+  },
   {
     key: AddUserUseCase.name,
     Class: AddUserUseCase,
